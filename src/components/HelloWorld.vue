@@ -1,43 +1,83 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
+    <h1>{{ $store.getters.missatge }}</h1>
+    <h5>{{$store.getters.nomComplet}}</h5>
+    <h4>Amics:</h4>
+    <input type="text" v-model="amic">
+    <button @click="addAmic">Afegir amic</button>
     <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router" target="_blank" rel="noopener">router</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex" target="_blank" rel="noopener">vuex</a></li>
+      <li v-for="(amic, index) in $store.state.amics"
+      :key="index">
+      {{amic}}</li>
     </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
+
+    <button @click="$store.commit('aumentar')">+</button><br>
+    <button @click="aumentar">Augmentar per mapMutations</button><br>
+    <button @click="disminuir">Disminuir per mapMutations</button><br>
+    <button @click="disminuirMultiplicador(2)">Disminuir 2 amb paràmetres per mapMutations</button>
+    <button @click="disminuirMultiplicador(3)">Disminuir 3 amb paràmetres per mapMutations</button>
+    <h4>numero {{numero}}</h4> mapState
+    <h6>numero {{$store.state.numero}}</h6>
+    <br>
+    <button @click="saberDiesAny">Obtenir usuaris</button><br>
+    <ul  v-for="(item, id) of diesAny" :key="id">
+      <li>{{item.name}}</li>
     </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+
+<br>
+ <div id="registrations">
+        <div class="summary">
+            <h3>Registrations</h3>
+            <h5>Total: {{ total }}</h5>
+        </div>
+        <hr>
+        <div class="row" v-for="(registration, id) in registrations" :key="id">
+            <h4>{{ registration.name }}</h4>
+            <span @click="unregister(registration)">(Unregister)</span>
+            <div class="date">{{ registration.date }}</div>
+        </div>
+    </div>
+
+
   </div>
 </template>
 
 <script>
+import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
 export default {
   name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
+  data() {
+    return {
+      amic: '',
+    }
+  },
+  methods: {
+    ...mapMutations(['aumentar', 'disminuir', 'disminuirMultiplicador']),
+    ...mapActions(['saberDiesAny']),
+   // ...mapGetters( 'usuaris', ['registrations', 'totalRegistrations']),
+  //  ...mapGetters( 'usuaris', ['registrations']),
+
+    addAmic() {
+      this.$store.state.amic = this.amic;
+      this.$store.dispatch('addAmicAction');
+      this.amic = '';
+    },
+    unregister(registration) {
+                const user = this.$store.state.users.find(user => {
+                    return user.id == registration.userId;
+                });
+                user.registered = false;
+                this.$store.state.registrations.splice(this.$store.state.registrations.indexOf(registration), 1);
+            }
+    
+  },
+  computed: {
+    ...mapState(['numero', 'diesAny']),
+    ...mapGetters({registrations: 'registrations', total: 'totalRegistrations'}),
+   // ...mapState('usuaris', ['users', 'registrations']),
+      }
+   
+}     
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -55,5 +95,11 @@ li {
 }
 a {
   color: #42b983;
+}
+input {
+  margin-right: 8px;
+}
+button {
+  margin: 6px;
 }
 </style>
