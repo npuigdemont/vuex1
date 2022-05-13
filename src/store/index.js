@@ -17,7 +17,9 @@ export default createStore({
       {id: 2, name: 'Anna', registered: false},
       {id: 3, name: 'John', registered: false},
       {id: 4, name: 'Xavi', registered: false},
-    ]
+    ],
+    authenticated: false,
+
     
   },
   getters: {
@@ -54,6 +56,9 @@ export default createStore({
     },
     omplirDiesAny(state, saberAction) {
       state.diesAny = saberAction;
+    },
+    setAuthentication(state, status) {
+      state.authenticated = status;
     }
   },
   actions: {
